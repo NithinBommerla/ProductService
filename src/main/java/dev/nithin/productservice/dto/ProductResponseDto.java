@@ -8,19 +8,19 @@ import lombok.Setter;
 @Getter
 public class ProductResponseDto {
     private long id;
-    private String title;
+    private String name;
     private double price;
     private String description;
-    private String image;
+    private String imageurl;
     private String category;
 
     public static ProductResponseDto from(Product product) {
         ProductResponseDto productResponseDto = new ProductResponseDto();
         productResponseDto.setId(product.getId());
-        productResponseDto.setTitle(product.getName());
+        productResponseDto.setName(product.getName());
         productResponseDto.setPrice(product.getPrice());
         productResponseDto.setDescription(product.getDescription());
-        productResponseDto.setImage(product.getImageUrl());
+        productResponseDto.setImageurl(product.getImageUrl());
         productResponseDto.setCategory(product.getCategory().getName());
 
         return productResponseDto;

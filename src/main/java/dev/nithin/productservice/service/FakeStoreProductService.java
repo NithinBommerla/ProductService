@@ -1,11 +1,12 @@
 package dev.nithin.productservice.service;
 
+import dev.nithin.productservice.dto.FakeStoreRequestDto;
 import dev.nithin.productservice.dto.FakeStoreResponseDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.http.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,33 @@ public class FakeStoreProductService implements ProductService {
         return convertToProductList(allProducts);
     }
 
+    @Override
+    public Product createProduct(String name, double price, String description, String category, String imageUrl) {
+        FakeStoreRequestDto fakeStoreRequestDto = createDtoFromParams(name, price, description, category, imageUrl);
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject("https://fakestoreapi.com/products", fakeStoreRequestDto, FakeStoreResponseDto.class);
+        if(fakeStoreResponseDto == null) {
+            return null;
+        }
+        return fakeStoreResponseDto.toProduct();
+    }
+
+    @Override
+    public Product replaceProductById(long id, String name, double price, String description, String category, String imageUrl) throws ProductNotFoundException {
+        FakeStoreRequestDto updatedFakeStoreRequestDto = createDtoFromParams(name, price, description, category, imageUrl);
+        // restTemplate.put("https://fakestoreapi.com/products/" + id, fakeStoreRequestDto, FakeStoreResponseDto.class);
+        // The above method is fine, but it doesn't return the response body. So we are using the exchange() method
+        // exchange() method since put doesn't implicitly create the object i.e. there is no putForObject() method
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+        HttpEntity<FakeStoreRequestDto> requestEntity = new HttpEntity<>(updatedFakeStoreRequestDto, headers);
+        ResponseEntity<FakeStoreResponseDto> responseEntity = restTemplate.exchange("https://fakestoreapi.com/products/" + id, HttpMethod.PUT, requestEntity, FakeStoreResponseDto.class);
+
+        FakeStoreResponseDto fakeStoreResponseDto = responseEntity.getBody();
+        if(fakeStoreResponseDto == null) throw new ProductNotFoundException("Product not found with id " + id);
+        return fakeStoreResponseDto.toProduct();
+    }
+
     private List<Product> convertToProductList(FakeStoreResponseDto[] allProducts){
         List<Product> products = new ArrayList<>();
         for (FakeStoreResponseDto fakeStoreResponseDto : allProducts) {
@@ -50,4 +78,13 @@ public class FakeStoreProductService implements ProductService {
         return products;
     }
 
+    private FakeStoreRequestDto createDtoFromParams(String name, double price, String description, String category, String imageUrl) {
+        FakeStoreRequestDto fakeStoreRequestDto = new FakeStoreRequestDto();
+        fakeStoreRequestDto.setTitle(name);
+        fakeStoreRequestDto.setPrice(price);
+        fakeStoreRequestDto.setDescription(description);
+        fakeStoreRequestDto.setCategory(category);
+        fakeStoreRequestDto.setImage(imageUrl);
+        return fakeStoreRequestDto;
+    }
 }

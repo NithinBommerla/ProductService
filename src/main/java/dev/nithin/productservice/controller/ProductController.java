@@ -1,12 +1,13 @@
 package dev.nithin.productservice.controller;
 
+import dev.nithin.productservice.dto.CreateFakeStoreProductRequestDto;
 import dev.nithin.productservice.dto.ProductResponseDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
 import dev.nithin.productservice.service.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,35 @@ public class ProductController {
         // return allProducts.stream().map(ProductResponseDto::from).toList(); // Lambda expression
         return convertToProductResponseDtoList(allProducts);
     }
+
+    @PostMapping("/products")
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto)  {
+        // Logic to create product is in ProductService
+        Product product = productService.createProduct(
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getCategory(),
+                createFakeStoreProductRequestDto.getImageUrl()
+        );
+        // Convert Product to ProductResponseDto
+        return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/products/{id}")
+    public ProductResponseDto replaceProductById(@RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto, @PathVariable("id") long id) throws ProductNotFoundException {
+        // Logic to replace product is in ProductService
+        Product product = productService.replaceProductById(id,
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getCategory(),
+                createFakeStoreProductRequestDto.getImageUrl()
+        );
+        // Convert Product to ProductResponseDto
+        return ProductResponseDto.from(product);
+    }
+
 
     private List<ProductResponseDto> convertToProductResponseDtoList(List<Product> allProducts){
         List<ProductResponseDto> productResponseDtos = new ArrayList<>();
