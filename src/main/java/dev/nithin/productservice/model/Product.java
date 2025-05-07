@@ -1,15 +1,17 @@
 package dev.nithin.productservice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class Product {
-    private long id;
-    private String name;
+@Entity
+public class Product extends Base {
     private String description;
     private double price;
     private String imageUrl;
+    @ManyToOne
     private Category category;
 }
