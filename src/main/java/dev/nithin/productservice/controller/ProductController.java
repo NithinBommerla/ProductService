@@ -1,5 +1,8 @@
 package dev.nithin.productservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import dev.nithin.productservice.dto.CreateFakeStoreProductRequestDto;
 import dev.nithin.productservice.dto.ProductResponseDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
@@ -71,6 +74,13 @@ public class ProductController {
         return ProductResponseDto.from(product);
     }
 
+    @PatchMapping(path = "/products/{id}", consumes = "application/json-patch+json")
+    public ProductResponseDto applyPatchToProductById(@PathVariable("id") long id, @RequestBody JsonPatch jsonPatch) throws ProductNotFoundException, JsonPatchException, JsonProcessingException {
+        // Logic to apply patch to product is in ProductService
+        Product product = productService.applyPatchToProductById(id, jsonPatch);
+        // Convert Product to ProductResponseDto
+        return ProductResponseDto.from(product);
+    }
 
     private List<ProductResponseDto> convertToProductResponseDtoList(List<Product> allProducts){
         List<ProductResponseDto> productResponseDtos = new ArrayList<>();

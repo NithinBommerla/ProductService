@@ -1,5 +1,10 @@
 package dev.nithin.productservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import dev.nithin.productservice.dto.FakeStoreRequestDto;
 import dev.nithin.productservice.dto.FakeStoreResponseDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
@@ -68,6 +73,35 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreResponseDto fakeStoreResponseDto = responseEntity.getBody();
         if(fakeStoreResponseDto == null) throw new ProductNotFoundException("Product not found with id " + id);
         return fakeStoreResponseDto.toProduct();
+    }
+
+    @Override
+    public Product applyPatchToProductById(long id, JsonPatch jsonPatch) throws ProductNotFoundException, JsonPatchException, JsonProcessingException {
+        // Get the product from the fake store API
+//        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreResponseDto.class);
+//        if(fakeStoreResponseDto == null) throw new ProductNotFoundException("Product not found with id " + id);
+
+        // Get Existing Product
+        Product existingProduct = getProductById(id);
+
+        // Convert the existing product into JSON format
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode patchedProduct = objectMapper.valueToTree(existingProduct);
+
+        // Apply the patch to the product
+        JsonNode patchedJsonPatch = jsonPatch.apply(patchedProduct);
+
+        // Convert the patched JSON back to a Product object
+        Product patchedProductObject = objectMapper.treeToValue(patchedJsonPatch, Product.class);
+
+        // Use the replace product method to update the product
+        return replaceProductById(id,
+                patchedProductObject.getName(),
+                patchedProductObject.getPrice(),
+                patchedProductObject.getDescription(),
+                patchedProductObject.getCategory().getName(),
+                patchedProductObject.getImageUrl()
+        );
     }
 
     private List<Product> convertToProductList(FakeStoreResponseDto[] allProducts){
