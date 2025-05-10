@@ -1,5 +1,6 @@
 package dev.nithin.productservice.exception;
 
+import com.github.fge.jsonpatch.JsonPatchException;
 import dev.nithin.productservice.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,14 @@ public class GlobalExceptionHandler {
         errorDto.setMessage(e.getMessage());
         errorDto.setStatus("Failure");
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(JsonPatchException.class)
+    public ResponseEntity<ErrorDto> handleJsonPatchException(JsonPatchException e) {
+        // Handle the exception and return an appropriate response
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setMessage(e.getMessage());
+        errorDto.setStatus("Failure");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 }

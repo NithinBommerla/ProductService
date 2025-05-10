@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service("productStorageService")
 public class ProductStorageService implements ProductService {
@@ -147,11 +148,10 @@ public class ProductStorageService implements ProductService {
     }
 
     private Category getCategoryByName(String name) {
-        if(categoryRepository.findByName(name) == null) {
-            Category category = new Category();
-            category.setName(name);
-            return categoryRepository.save(category);
-        }
-        return categoryRepository.findByName(name);
+       Optional<Category> categoryOptional = categoryRepository.findByName(name);
+       if(categoryOptional.isPresent()) return categoryOptional.get();
+       Category newCategory = new Category();
+       newCategory.setName(name);
+       return categoryRepository.save(newCategory);
     }
 }
