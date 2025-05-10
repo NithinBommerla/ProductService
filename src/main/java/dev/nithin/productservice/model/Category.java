@@ -1,6 +1,7 @@
 package dev.nithin.productservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.List;
 public class Category extends Base {
     // To let the ORM know that this field should be added as a foreign key in the table instead of product_category table
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private List<Product> products;
 
     public Category( String name) {

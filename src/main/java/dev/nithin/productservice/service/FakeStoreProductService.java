@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService {
 
     RestTemplate restTemplate;
@@ -83,17 +83,14 @@ public class FakeStoreProductService implements ProductService {
 
         // Get Existing Product
         Product existingProduct = getProductById(id);
-
         // Convert the existing product into JSON format
         ObjectMapper objectMapper = new ObjectMapper();
+        // Convert the existing product to a JsonNode
         JsonNode patchedProduct = objectMapper.valueToTree(existingProduct);
-
         // Apply the patch to the product
         JsonNode patchedJsonPatch = jsonPatch.apply(patchedProduct);
-
         // Convert the patched JSON back to a Product object
         Product patchedProductObject = objectMapper.treeToValue(patchedJsonPatch, Product.class);
-
         // Use the replace product method to update the product
         return replaceProductById(id,
                 patchedProductObject.getName(),
