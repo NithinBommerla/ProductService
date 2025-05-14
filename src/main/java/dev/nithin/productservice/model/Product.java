@@ -1,5 +1,7 @@
 package dev.nithin.productservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -13,5 +15,6 @@ public class Product extends Base {
     private double price;
     private String imageUrl;
     @ManyToOne
+    @JsonManagedReference
     private Category category;
 }

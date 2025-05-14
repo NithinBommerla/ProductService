@@ -1,5 +1,6 @@
 package dev.nithin.productservice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
@@ -15,7 +16,8 @@ import java.util.List;
 public class Category extends Base {
     // To let the ORM know that this field should be added as a foreign key in the table instead of product_category table
     @OneToMany(mappedBy = "category")
-    @JsonIgnore // This Annotation is used to ignore this field when serializing the object to JSON in (Patch method)
+    // @JsonIgnore // This Annotation is used to ignore this field when serializing the object to JSON in (Patch method)
+    @JsonBackReference
     private List<Product> products;
 
     public Category( String name) {

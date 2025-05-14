@@ -11,7 +11,7 @@ public class ProductResponseDto {
     private String name;
     private double price;
     private String description;
-    private String imageurl;
+    private String imageUrl;
     private String category;
 
     public static ProductResponseDto from(Product product) {
@@ -20,7 +20,7 @@ public class ProductResponseDto {
         productResponseDto.setName(product.getName());
         productResponseDto.setPrice(product.getPrice());
         productResponseDto.setDescription(product.getDescription());
-        productResponseDto.setImageurl(product.getImageUrl());
+        productResponseDto.setImageUrl(product.getImageUrl());
         productResponseDto.setCategory(product.getCategory().getName());
 
         return productResponseDto;

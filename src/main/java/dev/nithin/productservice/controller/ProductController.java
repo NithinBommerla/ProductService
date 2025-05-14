@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import dev.nithin.productservice.dto.CreateFakeStoreProductRequestDto;
+import dev.nithin.productservice.dto.ProductProjectionDto;
 import dev.nithin.productservice.dto.ProductResponseDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
@@ -25,7 +26,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/products/id/{id}")
     public ProductResponseDto getProductById(@PathVariable("id") long id) throws ProductNotFoundException {
         // Logic to get product by ID is in ProductService
         Product product = productService.getProductById(id);
@@ -45,6 +46,28 @@ public class ProductController {
         // Convert List<Product> to List<ProductResponseDto>
         // return allProducts.stream().map(ProductResponseDto::from).toList(); // Lambda expression
         return convertToProductResponseDtoList(allProducts);
+    }
+
+    @GetMapping("/products/name/{productName}")
+    public List<ProductResponseDto> getProductByName(@PathVariable("productName") String productName) throws ProductNotFoundException {
+        // Logic to get product by name is in ProductService
+        List<Product> products = productService.getProductsByName(productName);
+        // Check if the response is null or empty
+        if(products == null || products.isEmpty()) {
+            throw new ProductNotFoundException("No products found with name " + productName);
+        }
+        return convertToProductResponseDtoList(products);
+    }
+
+    @GetMapping("/products/category/{categoryName}")
+    public List<ProductResponseDto> getProductByCategoryName(@PathVariable("categoryName") String categoryName) throws ProductNotFoundException {
+        // Logic to get product by name is in ProductService
+        List<Product> products = productService.getProductsByCategoryName(categoryName);
+        // Check if the response is null or empty
+        if(products == null || products.isEmpty()) {
+            throw new ProductNotFoundException("No products found under category " + categoryName);
+        }
+        return convertToProductResponseDtoList(products);
     }
 
     @PostMapping("/products")
@@ -90,4 +113,18 @@ public class ProductController {
         }
         return productResponseDtos;
     }
+
+    /*
+    // Projection DTO
+    @GetMapping("/products/category/{categoryName}")
+    public List<ProductProjectionDto> getProductByCategoryName(@PathVariable("categoryName") String categoryName) throws Exception {
+        // Logic to get product by name is in ProductService
+        List<ProductProjectionDto> productProjectionDtos = productService.getProductsProjectionDtosByCategoryName(categoryName);
+        // Check if the response is null or empty
+        if(productProjectionDtos == null || productProjectionDtos.isEmpty()) {
+            throw new ProductNotFoundException("No products found under category " + categoryName);
+        }
+        return productProjectionDtos;
+    }
+    */
 }

@@ -7,14 +7,14 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import dev.nithin.productservice.dto.FakeStoreRequestDto;
 import dev.nithin.productservice.dto.FakeStoreResponseDto;
+import dev.nithin.productservice.dto.ProductProjectionDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 
 @Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService {
@@ -33,6 +33,21 @@ public class FakeStoreProductService implements ProductService {
         }
         return fakeStoreResponseDto.toProduct();
     }
+
+    @Override
+    public List<Product> getProductsByName(String name) throws ProductNotFoundException {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryName(String categoryName) throws ProductNotFoundException {
+        return Collections.emptyList();
+    }
+
+//    @Override
+//    public List<ProductProjectionDto> getProductsProjectionDtosByCategoryName(String categoryName) throws Exception{
+//        return Collections.emptyList();
+//    }
 
     @Override
     public List<Product> getAllProducts() throws ProductNotFoundException {
