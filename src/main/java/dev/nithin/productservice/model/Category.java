@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -15,8 +18,9 @@ import java.util.List;
 @Entity
 public class Category extends Base {
     // To let the ORM know that this field should be added as a foreign key in the table instead of product_category table
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER) // By default, it is LAZY, but we want to fetch it eagerly
     // @JsonIgnore // This Annotation is used to ignore this field when serializing the object to JSON in (Patch method)
+    @Fetch(FetchMode.SUBSELECT)
     @JsonBackReference
     private List<Product> products;
 
