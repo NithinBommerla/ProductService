@@ -13,7 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // For example, findByCategory, findByName, etc.
     Optional<Category> findByName(String name);
 
-    @EntityGraph(attributePaths = { "products" })
+    // @EntityGraph(attributePaths = { "products" })
     List<Category> findAll();
 
     @Query("SELECT c FROM Category c JOIN FETCH c.products")

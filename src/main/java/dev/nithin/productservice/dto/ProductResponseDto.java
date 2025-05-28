@@ -15,6 +15,8 @@ public class ProductResponseDto {
     private String category;
 
     public static ProductResponseDto from(Product product) {
+        if(product == null) return null;
+
         ProductResponseDto productResponseDto = new ProductResponseDto();
         productResponseDto.setId(product.getId());
         productResponseDto.setName(product.getName());
