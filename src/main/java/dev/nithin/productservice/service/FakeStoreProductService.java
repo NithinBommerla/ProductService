@@ -10,6 +10,7 @@ import dev.nithin.productservice.dto.FakeStoreResponseDto;
 import dev.nithin.productservice.dto.ProductProjectionDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
@@ -20,18 +21,26 @@ import java.util.*;
 public class FakeStoreProductService implements ProductService {
 
     RestTemplate restTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
-    public FakeStoreProductService(RestTemplate restTemplate) {
+    public FakeStoreProductService(RestTemplate restTemplate, RedisTemplate<String, Object> redisTemplate) {
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public Product getProductById(long id) throws ProductNotFoundException {
+
+        Product productFromRedis = (Product) redisTemplate.opsForValue().get(String.valueOf(id));
+        if(productFromRedis != null) return productFromRedis;
+
         FakeStoreResponseDto fakeStoreResponseDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreResponseDto.class);
         if(fakeStoreResponseDto == null) {
             throw new ProductNotFoundException("Product not found with id " + id);
         }
-        return fakeStoreResponseDto.toProduct();
+        Product productFromFakeStore =  fakeStoreResponseDto.toProduct();
+        redisTemplate.opsForValue().set(String.valueOf(id), productFromFakeStore);
+        return productFromFakeStore;
     }
 
     @Override
@@ -51,6 +60,9 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public List<Product> getAllProducts() throws ProductNotFoundException {
+
+        List<Product> cachedProducts = (List<Product>) redisTemplate.opsForValue().get("ALL_PRODUCTS");
+        if(cachedProducts != null && !cachedProducts.isEmpty()) return cachedProducts;
         FakeStoreResponseDto[] allProducts = restTemplate.getForObject("https://fakestoreapi.com/products/", FakeStoreResponseDto[].class);
         // FakeStoreResponseDto[] allProducts = new FakeStoreResponseDto[]{restTemplate.getForObject("https://fakestoreapi.com/products/", FakeStoreResponseDto.class)}; // new Array with .class
 
@@ -60,7 +72,9 @@ public class FakeStoreProductService implements ProductService {
         }
         // Convert FakeStoreResponseDto[] to List<Product>
         // return Arrays.stream(allProducts).map(FakeStoreResponseDto::toProduct).toList(); // Lambda expression
-        return convertToProductList(allProducts);
+        List<Product> productsList = convertToProductList(allProducts);
+        redisTemplate.opsForValue().set("ALL_PRODUCTS", productsList);
+        return productsList;
     }
 
     @Override

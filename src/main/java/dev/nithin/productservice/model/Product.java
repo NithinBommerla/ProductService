@@ -10,10 +10,12 @@ import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Entity
-public class Product extends Base {
+public class Product extends Base implements Serializable {
     private String description;
     private double price;
     private String imageUrl;

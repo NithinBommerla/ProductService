@@ -7,6 +7,7 @@ import dev.nithin.productservice.model.Product;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +21,8 @@ public class FakeStoreProductServiceTest {
     // This is testing for service layer
     // Here we will mock the RestTemplate to return a fake response
     RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
-    FakeStoreProductService fakeStoreProductService = new FakeStoreProductService(restTemplate);
+    RedisTemplate<String, Object> redisTemplate = Mockito.mock(RedisTemplate.class);
+    FakeStoreProductService fakeStoreProductService = new FakeStoreProductService(restTemplate, redisTemplate);
 
     private FakeStoreResponseDto createDummyResponseForTest() {
         FakeStoreResponseDto dummyResponse = new FakeStoreResponseDto();
