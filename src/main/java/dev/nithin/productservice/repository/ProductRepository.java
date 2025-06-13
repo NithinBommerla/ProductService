@@ -2,8 +2,11 @@ package dev.nithin.productservice.repository;
 
 import dev.nithin.productservice.dto.ProductProjection;
 import dev.nithin.productservice.dto.ProductProjectionDto;
+import dev.nithin.productservice.dto.ProductResponseDto;
 import dev.nithin.productservice.model.Category;
 import dev.nithin.productservice.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,4 +37,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT new dev.nithin.productservice.dto.ProductProjectionDto(p.name, p.price, p.description, p.imageUrl) FROM Product p WHERE p.category.name = :categoryName")
     List<ProductProjectionDto> getProductsProjectionDtosByCategoryName(@Param("categoryName") String categoryName);
+
+    Page<Product> findByNameContaining(String query, Pageable pageable);
 }
