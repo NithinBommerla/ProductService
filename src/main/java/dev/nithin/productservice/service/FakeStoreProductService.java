@@ -10,6 +10,7 @@ import dev.nithin.productservice.dto.FakeStoreResponseDto;
 import dev.nithin.productservice.dto.ProductProjectionDto;
 import dev.nithin.productservice.exception.ProductNotFoundException;
 import dev.nithin.productservice.model.Product;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +24,7 @@ public class FakeStoreProductService implements ProductService {
     RestTemplate restTemplate;
     RedisTemplate<String, Object> redisTemplate;
 
-    public FakeStoreProductService(RestTemplate restTemplate, RedisTemplate<String, Object> redisTemplate) {
+    public FakeStoreProductService(@Qualifier("getRestTemplate") RestTemplate restTemplate, RedisTemplate<String, Object> redisTemplate) {
         this.restTemplate = restTemplate;
         this.redisTemplate = redisTemplate;
     }

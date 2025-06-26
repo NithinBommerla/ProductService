@@ -42,7 +42,7 @@ public class ProductControllerTest {
         // Train the mock to return the dummy product when getProductById is called
         when(productService.getProductById(1L)).thenReturn(dummyProduct);
         // Act
-        ProductResponseDto productResponse = productController.getProductById(1L);
+        ProductResponseDto productResponse = productController.getProductById(1L, "");
         // Assert
         assertEquals(1L, productResponse.getId());
         assertEquals("Product 1", productResponse.getName());
@@ -58,7 +58,7 @@ public class ProductControllerTest {
         //  Train the mock to return the null when getProductById is called
         when(productService.getProductById(1L)).thenReturn(null);
         // Act
-        ProductResponseDto productResponse = productController.getProductById(1L);
+        ProductResponseDto productResponse = productController.getProductById(1L, "");
         // Assert
         // assertEquals(null, productResponse);
         assertNull(productResponse);

@@ -3,6 +3,7 @@ package dev.nithin.productservice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import dev.nithin.productservice.common.ApplicationCommons;
 import dev.nithin.productservice.dto.CreateFakeStoreProductRequestDto;
 import dev.nithin.productservice.dto.ProductProjectionDto;
 import dev.nithin.productservice.dto.ProductResponseDto;
@@ -21,13 +22,18 @@ import java.util.List;
 public class ProductController {
 
     ProductService productService;
+    ApplicationCommons applicationCommons;
 
-    public ProductController(@Qualifier("productStorageService") ProductService productService) {
+    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService, ApplicationCommons applicationCommons) {
         this.productService = productService;
+        this.applicationCommons = applicationCommons;
     }
 
     @GetMapping("/products/id/{id}")
-    public ProductResponseDto getProductById(@PathVariable("id") long id) throws ProductNotFoundException {
+    public ProductResponseDto getProductById(@PathVariable("id") long id, @RequestHeader("Authorization") String token) throws ProductNotFoundException {
+        // Validate the token using ApplicationCommons
+        applicationCommons.validateToken(token);
+
         // Logic to get product by ID is in ProductService
         Product product = productService.getProductById(id);
         // Convert Product to ProductResponseDto
