@@ -29,17 +29,17 @@ A Spring Boot application for managing products, supporting CRUD operations, sea
 ### Setup
 
 1. Clone the repository:
+    `git clone https://github.com/NithinBommerla/ProductService.git cd productservice`
 
-`git clone https://github.com/NithinBommerla/ProductService.git cd productservice`
-
-2.Configure application properties in `src/main/resources/application.properties`.
+2. Configure application properties in
+    `src/main/resources/application.properties`.
 
 3. Start Redis server locally.
 
 4. Build and run the application:
 ```mvn spring-boot:run```
 
-5. ## API Endpoints
+## API Endpoints
 
 - `GET /products/{id}`: Get product by ID
 - `GET /products`: Get all products
